@@ -1,8 +1,11 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+import helmet from "helmet";
+import compression from "compression";
 import initDB from "./config/db.mjs";
 import apiRouter from "./routes/api/api.mjs";
+import indexRouter from "./routes/index.mjs";
 import usersRouter from "./routes/users.mjs";
 
 // Initialize DB
@@ -17,7 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(cookieParser());
+app.use(compression());
+app.use(helmet());
 
+app.use('/', indexRouter);
 app.use('/api', apiRouter);
 app.use('/users', usersRouter);
 
