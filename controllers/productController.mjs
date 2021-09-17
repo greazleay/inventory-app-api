@@ -1,13 +1,13 @@
 import Product from "../models/product.mjs";
 
 export const get_all_product = (req, res) => {
-    Product.find({}, 'name')
+    Product.find({})
     .populate('categories')
-    .exec((err, product_list) => {
+    .exec((err, products) => {
         if (err) {
             return res.status(500).json({ msg: "An error has occured"})
         }
-        res.json({product_list})
+        res.json({products})
     })
 }
 
