@@ -20,7 +20,7 @@ export const get_single_product = (req, res) => {
         .exec((err, product) => {
             if (err) return res.status(500).json({ msg: "An error has occured" });
             if (!product) {
-                const err = new Error('Book not found');
+                const err = new Error('Product not found');
                 return res.status(404).json({ msg: err.message })
             }
             res.json(product)
@@ -44,7 +44,7 @@ export const post_create_product = [
     body('description', 'Please describe the product').trim().isLength({ min: 1 }).escape(),
     body('categories.*').escape(),
     body('price', 'Price must be a valid number').isNumeric().isLength({ min: 1 }).escape(),
-    body('stock', 'Please set product price').isNumeric().isLength({ min: 1 }).escape(),
+    body('stock', 'Please specify amount in stock').isNumeric().isLength({ min: 1 }).escape(),
 
     (req, res) => {
         const errors = validationResult(req);
@@ -53,7 +53,7 @@ export const post_create_product = [
             description: req.body.description,
             categories: req.body.categories,
             price: req.body.price,
-            stock: req.body.price,
+            stock: req.body.stock,
             img: req.body.img
         });
 
