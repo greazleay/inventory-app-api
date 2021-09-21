@@ -5,11 +5,7 @@ import * as products from "../../controllers/productController.mjs";
 const router = express.Router();
 
 /* GET home page. */
-router.get('/', (req, res, next) => {
-  res.json({ msg: 'Please respond with a resource' });
-});
-
-// router.post('/', (req, res) => res.send(req.body));
+router.get('/', categories.get_content_count);
 
 // Categories Route
 

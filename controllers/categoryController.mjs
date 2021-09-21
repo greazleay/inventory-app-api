@@ -4,6 +4,21 @@ import async from "async";
 import mongoose from "mongoose";
 import { body, validationResult } from "express-validator";
 
+export const get_content_count = (req, res, next) => {
+    async.parallel({
+        category_count: (cb) => {
+            Category.countDocuments({}, cb)
+        },
+        product_count: (cb) => {
+            Product.countDocuments({}, cb)
+        }
+    }, (err, results) => {
+        if (err) return next(err)
+        res.json(results)
+    }
+    )
+}
+
 export const get_all_categories = (req, res) => {
     Category.find({}).exec((err, categories) => {
         if (err) {
