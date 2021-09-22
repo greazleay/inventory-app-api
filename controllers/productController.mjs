@@ -2,25 +2,23 @@ import Product from "../models/product.mjs";
 import mongoose from "mongoose";
 import { body, validationResult } from "express-validator";
 
-export const get_all_product = (req, res) => {
+export const get_all_product = (req, res, next) => {
     Product.find({})
         .populate('categories')
         .exec((err, products) => {
-            if (err) {
-                return res.status(500).json({ msg: "An error has occured" })
-            }
+            if (err) return next(err)
             res.json(products)
         })
 };
 
-export const get_single_product = (req, res) => {
+export const get_single_product = (req, res, next) => {
     const id = mongoose.Types.ObjectId(req.params.id)
     Product.findById(id)
         .populate('categories')
         .exec((err, product) => {
-            if (err) return res.status(500).json({ msg: "An error has occured" });
+            if (err) return next(err);
             if (!product) {
-                const err = new Error('Product not found');
+                const err = new Error(`Product with ID: ${id} not found`);
                 return res.status(404).json({ msg: err.message })
             }
             res.json(product)
@@ -46,7 +44,7 @@ export const post_create_product = [
     body('price', 'Price must be a valid number').isNumeric().isLength({ min: 1 }).escape(),
     body('stock', 'Please specify amount in stock').isNumeric().isLength({ min: 1 }).escape(),
 
-    (req, res) => {
+    (req, res, next) => {
         const errors = validationResult(req);
         const product = new Product({
             name: req.body.name,
@@ -63,13 +61,13 @@ export const post_create_product = [
         } else {
             Product.findOne({ 'name': req.body.name })
                 .exec((err, found_book) => {
-                    if (err) return res.status(500).json({ msg: "Something went wrong" });
+                    if (err) return next(err);
                     if (found_book) {
                         res.status(409).json({ msg: "Product already exist" })
                     } else {
                         product.save(err => {
-                            if (err) return res.status(500).json({ msg: "Something went wrong" });
-                            res.status(201).json({ msg: `${req.body.name} created` })
+                            if (err) return next(err);
+                            res.json({ msg: `${req.body.name} created` })
                         })
                     }
                 })
@@ -96,7 +94,8 @@ export const put_update_product = [
     body('price', 'Price must be a valid number').isNumeric().isLength({ min: 1 }).escape(),
     body('stock', 'Please set product price').isNumeric().isLength({ min: 1 }).escape(),
 
-    (req, res) => {
+    (req, res, next) => {
+        const id = mongoose.Types.ObjectId(req.params.id);
         const errors = validationResult(req);
         const product = {
             name: req.body.name,
@@ -109,17 +108,26 @@ export const put_update_product = [
         if (!errors.isEmpty()) {
             return res.status(400).json(errors.array())
         } else {
-            Product.findByIdAndUpdate(req.params.id, product, {}, (err, theproduct) => {
-                if (err) return res.status(500).json({ msg: err })
-                res.json({ msg: `${theproduct._id} modified` })
+            Product.findByIdAndUpdate(id, product, {}, (err, theproduct) => {
+                if (err) return next(err);
+                if (!theproduct) {
+                    const err = new Error(`Product with ID: ${id} not found`);
+                    return res.status(404).json({ msg: err.message})
+                }
+                res.json({ msg: `Product with ID: ${id} modified successfully!!!` })
             })
         }
     }
 ];
 
-export const delete_delete_product = (req, res) => {
-    Product.findByIdAndRemove(req.params.id, (err) => {
-        if (err) return res.status(500).json({ msg: "Something went wrong" });
-        res.json({ msg: "Product deleted successfully" })
+export const delete_delete_product = (req, res, next) => {
+    const id = mongoose.Types.ObjectId(req.params.id);
+    Product.findByIdAndRemove(id, (err, product) => {
+        if (err) return next(err);
+        if (!product) {
+            const err = new Error(`Product with ID: ${id} not found`);
+            return res.status(404).json({ msg: err.message})
+        }
+        res.json({ msg: `Product with ID: ${id} deleted successfully!!!` })
     })
 }

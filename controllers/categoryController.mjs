@@ -19,12 +19,10 @@ export const get_content_count = (req, res, next) => {
     )
 }
 
-export const get_all_categories = (req, res) => {
+export const get_all_categories = (req, res, next) => {
     Category.find({}).exec((err, categories) => {
-        if (err) {
-            return res.status(500).json({ msg: "An error has occured" })
-        }
-        res.json(categories)
+        if (err) next(err);
+        res.json(categories);
     })
 }
 
@@ -66,12 +64,12 @@ export const post_create_category = [
         } else {
             Category.findOne({ 'name': req.body.name })
                 .exec((err, found_category) => {
-                    if (err) return res.status(500).json({ msg: "Something went wrong!!" });
+                    if (err) return next(err)
                     if (found_category) {
                         res.status(409).json({ msg: "Category already exist" })
                     } else {
                         category.save((err) => {
-                            if (err) return res.status(500).json({ msg: "Something went wrong!!" });
+                            if (err) return next(err)
                             res.status(201).json({ msg: `${req.body.name} created` })
                         })
                     }
@@ -97,13 +95,13 @@ export const put_update_category = [
             return
         } else {
             Category.findByIdAndUpdate(req.params.id, category, {}, (err, thecategory) => {
-                if (err) return res.status(500).json({ msg: "An error has occured" })
+                if (err) return next(err)
                 res.json({ msg: `${thecategory._id} modified` })
             })
         }
     }]
 
-export const delete_delete_category = (req, res) => {
+export const delete_delete_category = (req, res, next) => {
     const id = mongoose.Types.ObjectId(req.params.id);
     async.parallel({
         category_products: (cb) => {
@@ -117,8 +115,12 @@ export const delete_delete_category = (req, res) => {
                 res.status(409).json({ msg: `Please remove these Products first:- ${prods}` });
                 return;
             }
-            Category.findByIdAndRemove(id, (err) => {
-                if (err) return res.status(500).json({ msg: "An error has occured" });
+            Category.findByIdAndRemove(id, (err, category) => {
+                if (err) return next(err);
+                if (!category) {
+                    const err = new Error(`Category with ID: ${id} not found`);
+                    res.status(404).json({ msg: err.message})
+                }
                 res.json({ msg: "Category deleted" });
             });
         }
