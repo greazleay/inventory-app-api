@@ -1,5 +1,5 @@
-import { OAuth2Client } from "google-auth-library";
 import User from "../models/user.mjs";
+import { OAuth2Client } from "google-auth-library";
 
 const googleClient = new OAuth2Client({
     clientId: `${process.env.GOOGLE_CLIENT_ID}`
