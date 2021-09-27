@@ -11,6 +11,15 @@ export const get_all_product = (req, res, next) => {
         })
 };
 
+export const get_search_products_by_name = (req, res, next) => {
+    Product.find({ name: { $regex: req.query.q, $options: 'i'}}, 'name description img')
+        .exec((err, products) => {
+            if (err) return next(err);
+            if(!products.length) return res.status(404).json({msg: 'No matching product(s) found'});
+            res.json(products);
+        })
+}
+
 export const get_single_product = (req, res, next) => {
     const id = mongoose.Types.ObjectId(req.params.id)
     Product.findById(id)
@@ -112,7 +121,7 @@ export const put_update_product = [
                 if (err) return next(err);
                 if (!theproduct) {
                     const err = new Error(`Product with ID: ${id} not found`);
-                    return res.status(404).json({ msg: err.message})
+                    return res.status(404).json({ msg: err.message })
                 }
                 res.json({ msg: `Product with ID: ${id} modified successfully!!!` })
             })
@@ -126,7 +135,7 @@ export const delete_delete_product = (req, res, next) => {
         if (err) return next(err);
         if (!product) {
             const err = new Error(`Product with ID: ${id} not found`);
-            return res.status(404).json({ msg: err.message})
+            return res.status(404).json({ msg: err.message })
         }
         res.json({ msg: `Product with ID: ${id} deleted successfully!!!` })
     })

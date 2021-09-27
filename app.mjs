@@ -7,6 +7,7 @@ import compression from "compression";
 import cors from "cors"
 import initDB from "./config/db.mjs";
 import apiRouter from "./routes/api/api.mjs";
+import authRouter from "./routes/auth.mjs";
 import indexRouter from "./routes/index.mjs";
 import usersRouter from "./routes/users.mjs";
 
@@ -29,6 +30,7 @@ app.use(helmet());
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
 app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 
 // Handle 404 errors
 app.use((req, res, next) => {
