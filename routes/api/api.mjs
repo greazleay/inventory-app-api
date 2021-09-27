@@ -23,6 +23,8 @@ router.delete('/categories/:id/delete', categories.delete_delete_category);
 
 router.get('/products', products.get_all_product);
 
+router.get('/products/search', products.get_search_products_by_name);
+
 router.get('/products/:id', products.get_single_product);
 
 router.post('/products/create', products.post_create_product);
