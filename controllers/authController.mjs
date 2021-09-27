@@ -26,5 +26,5 @@ export const authenticateUser = async (req, res) => {
         await user.save();
     }
 
-    res.json({ user, token })
+    res.json({ user, token });
 }
