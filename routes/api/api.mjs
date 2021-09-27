@@ -1,6 +1,7 @@
 import express from "express";
 import * as categories from "../../controllers/categoryController.mjs";
 import * as products from "../../controllers/productController.mjs";
+import { authenticateUser } from "../../controllers/authController.mjs";
 
 const router = express.Router();
 
@@ -32,5 +33,9 @@ router.post('/products/create', products.post_create_product);
 router.put('/products/:id/update', products.put_update_product);
 
 router.delete('/products/:id/delete', products.delete_delete_product);
+
+// Authentication Route - not currently used
+
+router.post('/auth', authenticateUser);
 
 export default router
