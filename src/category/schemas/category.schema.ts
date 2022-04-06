@@ -11,8 +11,6 @@ export class Category {
     @Prop({ required: true })
     description: string;
 
-    @Prop({ method: 'getCategories', required: true })
-    categories: Category[];
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
