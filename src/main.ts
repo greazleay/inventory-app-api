@@ -28,6 +28,7 @@ async function bootstrap() {
     forbidNonWhitelisted: true
   }));
 
+  // Swagger Setup
   const config = new DocumentBuilder()
     .setTitle('Inventory App API')
     .setDescription('A simple API for managing inventory')
