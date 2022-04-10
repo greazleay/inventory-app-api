@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, VersionColumn, BeforeInsert } from 'typeorm';
-import { hash, hashSync } from 'bcrypt';
+import { hash } from 'bcrypt';
 import { Exclude } from 'class-transformer';
 
 enum Role {
@@ -44,7 +44,7 @@ export class User {
     version!: number;
 
     @BeforeInsert()
-    hashPassword() {
-        this.password = hashSync(this.password, 10);
+    async hashPassword() {
+        this.password = await hash(this.password, 10);
     }
 }

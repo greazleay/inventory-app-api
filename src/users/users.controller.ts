@@ -13,7 +13,7 @@ export class UsersController {
 
     @Get('userinfo')
     findOne(@Body('email') email: string) {
-        return this.usersService.findOne(email);
+        return this.usersService.findOneByEmail(email);
     }
 
     @Delete(':id')
