@@ -1,40 +1,40 @@
-import { Injectable } from '@nestjs/common';
-
-//Mongoose Option
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Product, ProductDocument } from './schemas/product.schema';
-
-//TypeORM Option
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { MongoRepository } from 'typeorm';
-// import { Product } from './entities/product.entity';
-
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Category } from 'src/category/entities/category.entity';
 
 @Injectable()
 export class ProductService {
 
   constructor(
-    @InjectModel(Product.name) private readonly productModel: Model<ProductDocument>
-    // @InjectRepository(Product) private readonly productRepository: MongoRepository<Product>,
-    ) { }
+    @InjectRepository(Product) private readonly productRepository: Repository<Product>,
+    @InjectRepository(Category) private readonly categoryRepository: Repository<Category>,
+  ) { }
 
   async create(createProductDto: CreateProductDto) {
-    const createdProduct = await this.productModel.create(createProductDto);
-    // const createdProduct = await this.productRepository.save(createProductDto);
-    return createdProduct;
+    try {
+
+      const doesProductExist = await this.productRepository.findOne({ name: createProductDto.name });
+      if (doesProductExist) throw new BadRequestException('Product already exists');
+      
+      createProductDto.categories = await this.categoryRepository.findByIds(createProductDto.categories);
+      const createdProduct = await this.productRepository.save(createProductDto);
+      return createdProduct;
+
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll(): Promise<Product[]> {
-    return this.productModel.find().exec();
-    // return this.productRepository.find({relations: ["categories"]});
+    return this.productRepository.find({ relations: ["categories"] });
   }
 
   async findOne(id: string): Promise<Product> {
-    return this.productModel.findOne({ _id: id }).populate('categories').exec();
-    // return this.productRepository.findOne(id);
+    return this.productRepository.findOne(id);
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
@@ -42,10 +42,7 @@ export class ProductService {
   }
 
   async remove(id: string) {
-    const deletedProduct = await this.productModel
-      .findByIdAndRemove({ _id: id })
-      .exec();
-    // const deletedProduct = await this.productRepository.deleteOne({ _id: id });
+    const deletedProduct = await this.productRepository.delete(id);
     return deletedProduct;
   }
 }

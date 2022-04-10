@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
@@ -15,8 +15,16 @@ export class CategoryService {
   ) { }
 
   async create(createCategoryDto: CreateCategoryDto) {
-    const createdCategory = await this.categoryRepository.save(createCategoryDto);
-    return createdCategory.id;
+
+    try {
+      const doesCategoryExist = await this.categoryRepository.findOne({ name: createCategoryDto.name });
+      if (doesCategoryExist) throw new BadRequestException('Category already exists');
+
+      const createdCategory = await this.categoryRepository.save(createCategoryDto);
+      return createdCategory;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll(): Promise<Category[]> {
@@ -24,8 +32,14 @@ export class CategoryService {
   }
 
   async findOne(id: string): Promise<Category> {
-    const category = await this.categoryRepository.findOne(id);
-    return category;
+
+    try {
+      const category = await this.categoryRepository.findOne(id, { relations: ['products'] });
+      if (!category) throw new NotFoundException('Category does not exist');
+      return category;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   update(id: number, updateCategoryDto: UpdateCategoryDto) {
@@ -33,7 +47,12 @@ export class CategoryService {
   };
 
   async delete(id: string) {
-    const deletedCategory = await this.categoryRepository.delete(id);
-    return deletedCategory;
+
+    try {
+      const deletedCategory = await this.categoryRepository.delete(id);
+      return deletedCategory;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

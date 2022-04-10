@@ -8,7 +8,7 @@ import { Request } from 'express';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post()
+  @Post('create')
   create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
   }
