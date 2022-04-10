@@ -1,10 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as compression from 'compression';
 import helmet from 'helmet';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const whitelist = ['http://localhost:3000', 'https://inv-hub.herokuapp.com'];
@@ -27,6 +27,7 @@ async function bootstrap() {
     whitelist: true,
     forbidNonWhitelisted: true
   }));
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Swagger Setup
   const config = new DocumentBuilder()

@@ -1,11 +1,11 @@
-import { Entity, ObjectID, ObjectIdColumn, Column } from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, VersionColumn } from "typeorm"
 import { Category } from "src/category/entities/category.entity"
 
 @Entity()
 export class Product {
 
-    @ObjectIdColumn()
-    id: ObjectID
+    @PrimaryGeneratedColumn('uuid')
+    id: string
 
     @Column()
     name: string
@@ -13,7 +13,8 @@ export class Product {
     @Column()
     description: string
 
-    @Column((type) => Category)
+    @ManyToMany(() => Category)
+    @JoinTable()
     categories: Category[]
 
     @Column()
@@ -24,4 +25,16 @@ export class Product {
 
     @Column()
     img: string
+
+    @Column()
+    @CreateDateColumn()
+    createdAt: Date
+
+    @Column()
+    @UpdateDateColumn()
+    updatedAt: Date
+
+    @Column()
+    @VersionColumn()
+    version: number
 }
