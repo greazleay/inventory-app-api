@@ -3,9 +3,6 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
-@SerializeOptions({
-    strategy: 'excludeAll',
-})
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
@@ -17,6 +14,11 @@ export class UsersController {
     @Get('userinfo')
     findOne(@Body('email') email: string) {
         return this.usersService.findOne(email);
+    }
+
+    @Delete(':id')
+    remove(@Param('id') id: string) {
+        return this.usersService.delete(id);
     }
 
 }

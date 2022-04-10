@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, ConflictException, NotFoundException, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
@@ -18,17 +18,21 @@ export class CategoryService {
 
     try {
       const doesCategoryExist = await this.categoryRepository.findOne({ name: createCategoryDto.name });
-      if (doesCategoryExist) throw new BadRequestException('Category already exists');
+      if (doesCategoryExist) throw new ConflictException('Category already exists');
 
       const createdCategory = await this.categoryRepository.save(createCategoryDto);
       return createdCategory;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new HttpException(error.message, error.status);
     }
   }
 
   async findAll(): Promise<Category[]> {
-    return this.categoryRepository.find({ relations: ['products'] });
+    try {
+      return this.categoryRepository.find();
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   async findOne(id: string): Promise<Category> {
@@ -38,7 +42,7 @@ export class CategoryService {
       if (!category) throw new NotFoundException('Category does not exist');
       return category;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new HttpException(error.message, error.status);
     }
   }
 
@@ -49,10 +53,10 @@ export class CategoryService {
   async delete(id: string) {
 
     try {
-      const deletedCategory = await this.categoryRepository.delete(id);
-      return deletedCategory;
+      await this.categoryRepository.delete(id);
+      return { statusCode: 200, message: 'Category deleted' };
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new HttpException(error.message, error.status);
     }
   }
 }

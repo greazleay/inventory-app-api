@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -18,23 +18,27 @@ export class ProductService {
     try {
 
       const doesProductExist = await this.productRepository.findOne({ name: createProductDto.name });
-      if (doesProductExist) throw new BadRequestException('Product already exists');
-      
+      if (doesProductExist) throw new ConflictException('Product already exists');
+
       createProductDto.categories = await this.categoryRepository.findByIds(createProductDto.categories);
       const createdProduct = await this.productRepository.save(createProductDto);
       return createdProduct;
 
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new HttpException(error.message, error.status);
     }
   }
 
   async findAll(): Promise<Product[]> {
-    return this.productRepository.find({ relations: ["categories"] });
+    return this.productRepository.find();
   }
 
   async findOne(id: string): Promise<Product> {
-    return this.productRepository.findOne(id);
+    try {
+      return this.productRepository.findOne(id, { relations: ["categories"] });
+    } catch (error) {
+      throw new HttpException(error.messsage, error.status);
+    }
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
@@ -42,7 +46,12 @@ export class ProductService {
   }
 
   async remove(id: string) {
-    const deletedProduct = await this.productRepository.delete(id);
-    return deletedProduct;
+
+    try {
+      await this.productRepository.delete(id);
+      return { statusCode: 200, message: 'Product deleted' };
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
   }
 }
