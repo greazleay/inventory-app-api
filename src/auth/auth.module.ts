@@ -5,17 +5,25 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { AuthController } from './auth.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config'
 
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
-    JwtModule.register({
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+    PassportModule.register({
+      session: false,
+      defaultStrategy: 'jwt'
     }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        publicKey: configService.get<string>('ACCESS_TOKEN_PUBLIC_KEY'),
+        privateKey: { key: configService.get<string>('ACCESS_TOKEN_PRIVATE_KEY'), passphrase: configService.get<string>('ACCESS_TOKEN_SECRET') },
+        signOptions: { algorithm: 'RS256', audience: 'http://localhost:3000', expiresIn: '15m', issuer: 'http://localhost:3000', },
+      }),
+    })
 
   ],
   exports: [AuthService],

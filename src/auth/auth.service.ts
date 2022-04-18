@@ -1,13 +1,14 @@
-import { HttpException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
+import { User } from 'src/users/entities/user.entity';
 import { compare } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
     constructor(
         private usersService: UsersService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
     ) { }
 
     async validateUser(email: string, pass: string): Promise<any> {
@@ -19,13 +20,16 @@ export class AuthService {
         } catch (error) {
             throw new HttpException(error.message, error.status);
         }
-
     };
 
-    async login(user: any) {
-        const payload = { email: user.email, sub: user.id };
-        return {
-            access_token: this.jwtService.sign(payload),
-        };
+    async login(user: User) {
+        try {
+            const payload = { email: user.email, sub: user.id };
+            return {
+                access_token: this.jwtService.sign(payload),
+            };
+        } catch (error) {
+            throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+        }
     }
 }

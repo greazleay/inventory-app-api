@@ -4,7 +4,7 @@ import * as compression from 'compression';
 import helmet from 'helmet';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const whitelist = ['http://localhost:3000', 'https://inv-hub.herokuapp.com'];
@@ -15,7 +15,7 @@ async function bootstrap() {
       if (whitelist.indexOf(requestOrigin) !== -1 || !requestOrigin) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'))
+        callback(new HttpException('Not allowed by CORS', HttpStatus.FORBIDDEN))
       }
     }
   };
