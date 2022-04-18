@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, HttpException } from '@nestjs/common';
+import { Injectable, ConflictException, HttpException, NotFoundException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
@@ -30,12 +30,18 @@ export class ProductService {
   }
 
   async findAll(): Promise<Product[]> {
-    return this.productRepository.find();
+    try {
+      return await this.productRepository.find();
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
+    }
   }
 
   async findOne(id: string): Promise<Product> {
     try {
-      return this.productRepository.findOne(id, { relations: ["categories"] });
+      const product = await this.productRepository.findOne(id, { relations: ["categories"] });
+      if (!product) throw new NotFoundException(`Product with ID: ${id} not found on this server`)
+      return product
     } catch (error) {
       throw new HttpException(error.messsage, error.status);
     }

@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
+import { SwaggerCustomOptions } from 'src/global'
 
 async function bootstrap() {
   const whitelist = ['http://localhost:3000', 'https://inv-hub.herokuapp.com'];
@@ -31,6 +32,8 @@ async function bootstrap() {
 
   // Swagger Setup
   const config = new DocumentBuilder()
+    .addBasicAuth()
+    .addBearerAuth()
     .setTitle('Inventory App API')
     .setDescription('A simple API for managing inventory')
     .setVersion('1.0')
@@ -44,8 +47,17 @@ async function bootstrap() {
     ) => methodKey
   };
 
+  const customOptions: SwaggerCustomOptions = {
+    customSiteTitle: 'Inventory App API Docs',
+    customfavIcon: '',
+    customCss: '.swagger-ui .topbar { display: none }',
+    swaggerOptions: {
+      persistAuthorization: true
+    }
+  }
+
   const document = SwaggerModule.createDocument(app, config, options);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api-docs', app, document, customOptions);
 
   await app.listen(3000);
 };

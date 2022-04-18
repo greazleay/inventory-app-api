@@ -24,7 +24,7 @@ export class UsersService {
     async findOneById(id: string): Promise<User> {
         try {
             const foundUser = await this.usersRepository.findOne(id);
-            if (!foundUser) throw new NotFoundException(`User with id: ${id} does not exist`);
+            if (!foundUser) throw new NotFoundException(`User with id: ${id} does not exist on this server`);
             return foundUser;
         } catch (error) {
             throw new HttpException(error.message, error.status);
