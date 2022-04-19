@@ -17,6 +17,7 @@ export class UsersService {
             if (!foundUser) throw new UnauthorizedException('Invalid Credentials');
             return foundUser;
         } catch (error) {
+            console.error(error)
             throw new HttpException(error.message, error.status);
         }
     };
