@@ -28,6 +28,7 @@ export class UsersService {
             if (!foundUser) throw new NotFoundException(`User with id: ${id} does not exist on this server`);
             return foundUser;
         } catch (error) {
+            console.error(error.message)
             throw new HttpException(error.message, error.status);
         }
     };
@@ -36,12 +37,13 @@ export class UsersService {
         try {
             const isUserExist = await this.usersRepository.findOne({ email: createUserDto.email })
             if (isUserExist) throw new ConflictException(`User with ${createUserDto.email} already exists`);
-            
+
             const newUser = this.usersRepository.create(createUserDto);
             await this.usersRepository.save(newUser);
-            
+
             return newUser;
         } catch (error) {
+            console.error(error.message)
             throw new HttpException(error.message, error.status);
         }
     };
@@ -52,6 +54,7 @@ export class UsersService {
             await this.usersRepository.delete(id);
             return { statusCode: 200, message: 'User deleted' };
         } catch (error) {
+            console.error(error.message)
             throw new HttpException(error.message, error.status);
         }
     }

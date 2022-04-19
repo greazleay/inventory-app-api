@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, ConflictException, NotFoundException, HttpException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
@@ -23,6 +23,7 @@ export class CategoryService {
       const createdCategory = await this.categoryRepository.save(createCategoryDto);
       return createdCategory;
     } catch (error) {
+      console.error(error.message)
       throw new HttpException(error.message, error.status);
     }
   }
@@ -31,6 +32,7 @@ export class CategoryService {
     try {
       return this.categoryRepository.find();
     } catch (error) {
+      console.error(error.message)
       throw new HttpException(error.message, error.status);
     }
   }
@@ -42,6 +44,7 @@ export class CategoryService {
       if (!category) throw new NotFoundException('Category does not exist');
       return category;
     } catch (error) {
+      console.error(error.message)
       throw new HttpException(error.message, error.status);
     }
   }
@@ -56,6 +59,7 @@ export class CategoryService {
       await this.categoryRepository.delete(id);
       return { statusCode: 200, message: 'Category deleted' };
     } catch (error) {
+      console.error(error.message)
       throw new HttpException(error.message, error.status);
     }
   }
