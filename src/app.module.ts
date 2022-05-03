@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { DefaultAdminModule } from 'nestjs-admin';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Connection, getConnectionOptions } from 'typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -25,6 +26,7 @@ import configuration from './config/configuration';
         }),
     }),
     AuthModule,
+    DefaultAdminModule,
     CategoryModule,
     ProductModule,
     UsersModule,

@@ -13,8 +13,8 @@ A simple CRUD application for managing product inventory of an online store.
 * [NestJS](https://nestjs.com/)
 * [TypeScript](https://www.typescriptlang.org/)
 * [Express](https://expressjs.com/)
-* [MongoDB](https://www.mongodb.com/)
-* [Mongoose](https://mongoosejs.com/)
+* [PostgreSQL](https://www.postgresql.org/)
+* [TypeORM](https://typeorm.io/)
 * [Jest](https://jestjs.io/)
 
 

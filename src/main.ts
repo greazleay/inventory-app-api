@@ -5,20 +5,20 @@ import helmet from 'helmet';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { SwaggerModule, DocumentBuilder, SwaggerDocumentOptions } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
-import { SwaggerCustomOptions } from 'src/global'
+import { SwaggerCustomOptions } from './global'
 
 async function bootstrap() {
   const whitelist = ['http://localhost:3000', 'https://inv-hub.herokuapp.com'];
   const corsOptions: CorsOptions = {
     credentials: true,
-    methods: ['GET', 'DELETE', 'OPTIONS', 'POST', 'PUT'],
+    methods: ['GET', 'DELETE', 'OPTIONS', 'PATCH', 'PUT'],
     origin: (requestOrigin: string, callback) => {
       if (whitelist.indexOf(requestOrigin) !== -1 || !requestOrigin) {
         callback(null, true);
       } else {
         callback(new HttpException('Not allowed by CORS', HttpStatus.FORBIDDEN))
       }
-    }
+    },
   };
 
   const app = await NestFactory.create(AppModule, { cors: corsOptions });

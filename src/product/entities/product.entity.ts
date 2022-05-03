@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, VersionColumn } from "typeorm"
-import { Category } from "src/category/entities/category.entity"
+import { Category } from "../../category/entities/category.entity"
 
 @Entity()
 export class Product {
@@ -24,7 +24,7 @@ export class Product {
     stock: number
 
     @Column()
-    img: string
+    productImage: string
 
     @Column()
     @CreateDateColumn()

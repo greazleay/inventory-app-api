@@ -18,7 +18,7 @@ export class ProductController {
   }
 
   @ApiOkResponse({ description: 'Returns all products' })
-  @Get()
+  @Get('all')
   findAll(@Req() request: Request) {
     return this.productService.findAll();
   }
