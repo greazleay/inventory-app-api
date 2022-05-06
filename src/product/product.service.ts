@@ -5,6 +5,7 @@ import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Category } from '../category/entities/category.entity';
+import { PaginateDto } from '../common/dto/common-data.dto';
 
 @Injectable()
 export class ProductService {
@@ -29,9 +30,14 @@ export class ProductService {
     }
   }
 
-  async findAll(): Promise<Product[]> {
+  async findAll(paginate: PaginateDto): Promise<{ products: Product[], count: number }> {
     try {
-      return await this.productRepository.find();
+      const { page, take } = paginate;
+      const [products, count] = await this.productRepository.findAndCount({
+        skip: (page - 1) * take,
+        take: take,
+      });
+      return { products, count };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
     }
