@@ -3,7 +3,7 @@ import { ApiConflictResponse, ApiCreatedResponse, ApiOkResponse, ApiNotFoundResp
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { PaginateDto } from '../common/dto/common-data.dto';
+import { PaginateDto } from '../common/dto/paginate.dto';
 
 @ApiTags('product')
 @Controller('product')
@@ -19,8 +19,8 @@ export class ProductController {
 
   @ApiOkResponse({ description: 'Returns all products' })
   @Get('all')
-  findAll(@Query() query: PaginateDto) {
-    return this.productService.findAll(query);
+  findAll(@Query() queryParam: PaginateDto) {
+    return this.productService.findAll(queryParam);
   }
 
   @ApiOkResponse({ description: 'Returns product with the specified ID' })

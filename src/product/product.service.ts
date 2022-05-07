@@ -5,7 +5,8 @@ import { Product } from './entities/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Category } from '../category/entities/category.entity';
-import { PaginateDto } from '../common/dto/common-data.dto';
+import { PaginateDto } from '../common/dto/paginate.dto';
+import { IProductResponse } from './interfaces/product.interface';
 
 @Injectable()
 export class ProductService {
@@ -30,14 +31,20 @@ export class ProductService {
     }
   }
 
-  async findAll(paginate: PaginateDto): Promise<{ products: Product[], count: number }> {
+  async findAll(paginate: PaginateDto): Promise<IProductResponse> {
     try {
-      const { page, take } = paginate;
+      const { page, limit } = paginate;
       const [products, count] = await this.productRepository.findAndCount({
-        skip: (page - 1) * take,
-        take: take,
+        skip: (page - 1) * limit,
+        take: limit,
       });
-      return { products, count };
+      const meta = {
+        page,
+        limit,
+        totalPages: Math.ceil(count / limit),
+        totalCount: count,
+      }
+      return { products, meta };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
     }
