@@ -20,7 +20,8 @@ export class CategoryService {
       const doesCategoryExist = await this.categoryRepository.findOne({ name: createCategoryDto.name });
       if (doesCategoryExist) throw new ConflictException('Category already exists');
 
-      const createdCategory = await this.categoryRepository.save(createCategoryDto);
+      const createdCategory = this.categoryRepository.create(createCategoryDto);
+      await this.categoryRepository.save(createdCategory);
       return createdCategory;
     } catch (error) {
       console.error(error.message)

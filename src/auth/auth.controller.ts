@@ -1,4 +1,4 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, HttpCode, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBasicAuth } from '@nestjs/swagger';
 import { RequestWithUser } from '../auth/interfaces/auth.interface';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -11,8 +11,9 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @ApiBasicAuth()
-    @UseGuards(LocalAuthGuard)
     @Post('login')
+    @HttpCode(200)
+    @UseGuards(LocalAuthGuard)
     async login(@Req() req: RequestWithUser) {
         return this.authService.login(req.user);
     }

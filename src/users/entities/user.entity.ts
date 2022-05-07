@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, VersionColumn, BeforeInsert } from 'typeorm';
+import { Entity, Column, BeforeInsert } from 'typeorm';
 import { hash } from 'bcrypt';
 import { Exclude } from 'class-transformer';
+import { AbstractEntity } from '../../common/entities/abstract.entity';
 
 enum Role {
     USER = "user",
@@ -8,9 +9,7 @@ enum Role {
 }
 
 @Entity()
-export class User {
-    @PrimaryGeneratedColumn('uuid')
-    id: number;
+export class User extends AbstractEntity {
 
     @Column()
     firstName: string;
@@ -33,18 +32,6 @@ export class User {
 
     @Column({ type: "enum", enum: Role, default: Role.USER })
     role: Role;
-
-    @Column()
-    @CreateDateColumn()
-    createdAt!: Date;
-
-    @Column()
-    @UpdateDateColumn()
-    updatedAt!: Date;
-
-    @Column()
-    @VersionColumn()
-    version!: number;
 
     @BeforeInsert()
     async hashPassword() {

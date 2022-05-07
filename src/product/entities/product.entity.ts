@@ -1,17 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, VersionColumn } from "typeorm"
+import { Entity, Column, ManyToMany, JoinTable } from "typeorm"
+import { Describe } from "../../common/entities/describe.entity"
 import { Category } from "../../category/entities/category.entity"
 
 @Entity()
-export class Product {
-
-    @PrimaryGeneratedColumn('uuid')
-    id: string
-
-    @Column()
-    name: string
-
-    @Column()
-    description: string
+export class Product extends Describe {
 
     @ManyToMany(() => Category, category => category.products)
     @JoinTable()
@@ -25,16 +17,4 @@ export class Product {
 
     @Column()
     productImage: string
-
-    @Column()
-    @CreateDateColumn()
-    createdAt: Date
-
-    @Column()
-    @UpdateDateColumn()
-    updatedAt: Date
-
-    @Column()
-    @VersionColumn()
-    version: number
 }

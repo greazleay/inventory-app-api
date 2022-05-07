@@ -23,7 +23,8 @@ export class ProductService {
       if (doesProductExist) throw new ConflictException('Product already exists');
 
       createProductDto.categories = await this.categoryRepository.findByIds(createProductDto.categories);
-      const createdProduct = await this.productRepository.save(createProductDto);
+      const createdProduct = this.productRepository.create(createProductDto);
+      await this.productRepository.save(createdProduct);
       return createdProduct;
 
     } catch (error) {
