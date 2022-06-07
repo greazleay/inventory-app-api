@@ -1,17 +1,18 @@
 import { join } from 'path';
-import AutoLoad, {AutoloadPluginOptions} from 'fastify-autoload';
+import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload';
 import { FastifyPluginAsync } from 'fastify';
+import initDB from './config/database';
 
 export type AppOptions = {
   // Place your custom options for app below here.
 } & Partial<AutoloadPluginOptions>;
 
 const app: FastifyPluginAsync<AppOptions> = async (
-    fastify,
-    opts
+  fastify,
+  opts
 ): Promise<void> => {
   // Place here your custom code!
-
+  initDB()
   // Do not touch the following lines
 
   // This loads all plugins defined in plugins

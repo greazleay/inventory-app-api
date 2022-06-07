@@ -1,13 +1,9 @@
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
+import { ICategory } from '../interfaces/category.interface';
 
-const CategorySchema = new Schema({
+const CategorySchema = new Schema<ICategory>({
   name: { type: String, required: true },
   description: { type: String, required: true },
-});
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
-// Virtal for Category URL
-// CategorySchema.virtual("url").get(() => {
-//   return "/api/category" + this._id;
-// });
-
-export default model("Category", CategorySchema);
+export default model<ICategory>('Category', CategorySchema);

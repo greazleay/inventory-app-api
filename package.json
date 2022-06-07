@@ -1,5 +1,5 @@
 {
-  "name": "fastify-demo",
+  "name": "inventory-app-api",
   "version": "1.0.0",
   "description": "This project was bootstrapped with Fastify-CLI.",
   "main": "app.ts",
@@ -10,27 +10,37 @@
     "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts test/**/*.test.ts",
     "start": "npm run build:ts && fastify start -l info dist/app.js",
     "build:ts": "tsc",
-    "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"tsc -w\" \"fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js\""
+    "watch:ts": "tsc -w",
+    "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greazleay/inventory-app-api.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/greazleay/inventory-app-api/issues"
+  },
+  "homepage": "https://github.com/greazleay/inventory-app-api#readme",
   "dependencies": {
-    "fastify": "^3.27.4",
-    "fastify-autoload": "^3.11.0",
-    "fastify-cli": "^2.15.0",
+    "@fastify/autoload": "^4.0.1",
+    "@fastify/sensible": "^4.1.0",
+    "fastify": "^3.29.0",
+    "fastify-cli": "^3.1.0",
     "fastify-plugin": "^3.0.1",
-    "fastify-sensible": "^3.1.2",
-    "mongoose": "^6.2.9"
+    "joi": "^17.6.0",
+    "mongoose": "^6.3.5"
   },
   "devDependencies": {
-    "@types/node": "^17.0.8",
-    "@types/tap": "^15.0.6",
-    "concurrently": "^7.0.0",
+    "@types/node": "^17.0.40",
+    "@types/tap": "^15.0.7",
+    "concurrently": "^7.2.1",
     "fastify-tsconfig": "^1.0.1",
-    "nodemon": "^2.0.15",
-    "tap": "^16.0.1",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.2"
+    "tap": "^16.2.0",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3"
   }
 }
