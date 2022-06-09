@@ -4,7 +4,7 @@ import { getAllProducts, getProductById, getProductByName, createProduct } from 
 
 const products: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     
-    fastify.get('/all', getAllProducts);
+    fastify.get('/', getAllProducts);
 
     fastify.get('/:id', getProductById);
 

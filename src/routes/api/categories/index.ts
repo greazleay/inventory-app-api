@@ -4,7 +4,7 @@ import { validateCreateCategory } from '../../../validators/category.validator';
 
 const categories: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
-    fastify.get('/all', getAllCategories);
+    fastify.get('/', { onRequest: [fastify.jwtauthenticate] }, getAllCategories);
 
     fastify.get('/:id', getCategoryById);
 
