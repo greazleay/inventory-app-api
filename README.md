@@ -1,20 +1,35 @@
-# Getting Started with [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
-This project was bootstrapped with Fastify-CLI.
+# INVENTORY APP API
+
+## Description
+
+A simple CRUD application for managing product inventory of an online store.
+
+## Authors
+
+* [Lekan Adetunmbi](https://github.com/greazleay)
+
+## Tech Stack
+
+* [Fastify](https://fastify.io/)
+* [Fastify-CLI](https://www.npmjs.com/package/fastify-cli)
+* [TypeScript](https://www.typescriptlang.org/)
+* [MongoDB](https://www.mongodb.com/)
+* [Mongoose](https://mongoosejs.com/)
+* [@fastify/jwt](https://www.npmjs.com/package/@fastify/jwt)
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm run dev`
+### `yarn run dev`
 
-To start the app in dev mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To start the app in dev mode.
 
-### `npm start`
+### `yarn run start`
 
 For production mode
 
-### `npm run test`
+### `yarn run test`
 
 Run the test cases.
 
