@@ -1,14 +1,14 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import Category from '../models/Category';
-import { AppError } from '../errors/app.error';
+// import { AppError } from '../errors/app.error';
 
 
-export const countCategories = async (request: FastifyRequest, reply: FastifyReply): Promise<number> => {
+export const countCategories = async (request: FastifyRequest, reply: FastifyReply): Promise<number | void> => {
     try {
         return await Category.estimatedDocumentCount().exec();
     } catch (error: any) {
         console.error(error);
-        return error;
+        reply.send(error);
     }
 };
 
@@ -17,6 +17,7 @@ export const getAllCategories = async (request: FastifyRequest, reply: FastifyRe
         return await Category.find({}).exec();
     } catch (error) {
         console.error(error);
+        reply.send(error);
     }
 };
 
@@ -28,11 +29,11 @@ export const getCategoryById = async (request: FastifyRequest<{
     , reply: FastifyReply) => {
     try {
         const category = await Category.findById(request.params.id).exec();
-        if (!category) throw new AppError('Category not found', 404);
+        if (!category) throw request.server.httpErrors.notFound('Category not found');
         return category;
     } catch (error) {
         console.error(error);
-        return error;
+        reply.send(error);
     }
 };
 
@@ -45,7 +46,7 @@ export const getCategoryByName = async (request: FastifyRequest<{
     try {
         const { name } = request.query;
         const category = await Category.findOne({ name }).exec();
-        if (!category) throw new AppError('Category not found', 404);
+        if (!category) throw request.server.httpErrors.notFound('Category not found');
         return category;
     } catch (error) {
         console.error(error);
@@ -62,7 +63,7 @@ export const searchCategoryByName = async (request: FastifyRequest<{
     try {
         const { name } = request.query;
         const category = await Category.find({ name: { $regex: name, $options: 'i' } }).exec();
-        if (!category) throw new AppError('Category not found', 404);
+        if (!category) throw request.server.httpErrors.notFound('Category not found');
         return category;
     } catch (error) {
         console.error(error);
@@ -80,7 +81,7 @@ export const createCategory = async (request: FastifyRequest<{
     try {
         const { name, description } = request.body;
         const foundCategory = await Category.findOne({ name }).exec();
-        if (foundCategory) throw new AppError('Category already exists', 400);
+        if (foundCategory) throw request.server.httpErrors.conflict('Category already exists');
         const category = await Category.create({ name, description });
         return category;
     } catch (error) {
@@ -104,7 +105,7 @@ export const updateCategory = async (request: FastifyRequest<{
         const { id } = request.params;
         const { name, description } = request.body;
         const categoryToUpdate = await Category.findByIdAndUpdate(id, { name, description }, { new: true }).exec();
-        if (!categoryToUpdate) throw new AppError('Category not found', 404);
+        if (!categoryToUpdate) throw request.server.httpErrors.notFound('Category not found');
         return categoryToUpdate;
     } catch (error) {
         console.error(error);
@@ -120,7 +121,7 @@ export const deleteCategory = async (request: FastifyRequest<{
     try {
         const { id } = request.params;
         const categoryToDelete = await Category.findByIdAndDelete(id).exec();
-        if (!categoryToDelete) throw new AppError('Category not found', 404);
+        if (!categoryToDelete) throw request.server.httpErrors.notFound('Category not found');
         return categoryToDelete;
     } catch (error: any) {
         console.error(error);
