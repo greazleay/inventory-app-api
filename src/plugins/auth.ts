@@ -16,8 +16,11 @@ export default fp<FastifyJWTOptions>(async (fastify, opts) => {
         sign: {
             algorithm: 'RS256',
             iss: 'http://localhost:3000',
-            audience: 'http://localhost:3000',
-            kid: 'access-token-public-key',
+            aud: 'http://localhost:3000',
+            expiresIn: '1h',
+            kid: 'atpubk',
+            jti: 'access-token-jti',
+            nonce: 'defaultNonce'
         },
         verify: {
             allowedAud: 'http://localhost:3000',

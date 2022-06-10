@@ -14,28 +14,33 @@ export const auth: FastifyPluginAsync = async (fastify, opts): Promise<void> => 
     }>,
 
         reply: FastifyReply) => {
-        const { email, password } = request.body;
-        const user = await User.findOne({ email });
+        try {
+            const { email, password } = request.body;
+            const user = await User.findOne({ email });
 
-        if (!user || !(await user.validatePassword(password))) {
-            reply.code(401).send({
-                message: 'Invalid email or password'
-            });
+            if (!user || !(await user.validatePassword(password))) {
+                // reply.code(401).send({
+                //     message: 'Invalid email or password'
+                // });
+                throw fastify.httpErrors.unauthorized('Invalid email or password');
+            }
+
+            const payload = {
+                sub: user!._id,
+                name: user!.name,
+                email: user!.email,
+                avatar: user!.avatar,
+                isAdmin: user!.isAdmin,
+                isMember: user!.isMember,
+                last_login: user!.lastLogin,
+                token_version: user!.tokenVersion
+            };
+
+            return { access_token: fastify.jwt.sign(payload, fastify.jwt.options.sign) };
+        } catch (error) {
+            console.error(error);
+            reply.send(error);
         }
-
-        const payload = {
-            sub: user!._id,
-            name: user!.name,
-            email: user!.email,
-            avatar: user!.avatar,
-            isAdmin: user!.isAdmin,
-            isMember: user!.isMember,
-            last_login: user!.lastLogin,
-            token_version: user!.tokenVersion
-        };
-
-        const token = fastify.jwt.sign(payload, { expiresIn: '1h', algorithm: 'RS256', aud: 'http://localhost:3000', iss: 'http://localhost:3000' });
-        return { access_token: token };
     })
 }
 

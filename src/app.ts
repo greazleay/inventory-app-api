@@ -6,6 +6,7 @@ import helmet from '@fastify/helmet';
 import compress from '@fastify/compress';
 import cookie from '@fastify/cookie'
 import initDB from './config/database';
+import sensible from '@fastify/sensible';
 
 export type AppOptions = {
   // Place your custom options for app below here.
@@ -34,6 +35,8 @@ fastify.register(cors, {
     optionsSuccessStatus: 204,
   })
 
+  void await fastify.register(sensible)
+  
   void await fastify.register(cookie)
   
   void await fastify.register(helmet)
