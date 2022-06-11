@@ -14,6 +14,9 @@ export default fp<FastifyJWTOptions>(async (fastify, opts) => {
             },
             public: Buffer.from(process.env.ACCESS_TOKEN_PUBLIC_KEY_BASE64 as string, 'base64').toString('ascii')
         },
+        decode: {
+            checkTyp: 'JWT'
+        },
         sign: {
             algorithm: 'RS256',
             iss: 'http://localhost:3000',
